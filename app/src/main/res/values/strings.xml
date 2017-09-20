@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Restaurante app</string>
+    <string name="correo">Correo electronico</string>
+    <string name="password">Contraseña</string>
+    <string name="iniciar">Iniciar Sesión</string>
+    <string name="registrese">Registrese</string>
+    <string name="registro">Registrar</string>
+    <string name="reppassword">Repetir contraseña</string>
+    <string name="mCerrar">Cerrar sesion</string>
+    <string name="perfil">Mi perfil</string>
+</resources>
