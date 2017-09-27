@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "140361452290",
+    "project_id": "firebase-restaurante-app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140361452290:android:21cc118ae27ed3e7",
+        "android_client_info": {
+          "package_name": "com.garcesito.restauranteapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140361452290-dgvvbm06uon9mfnuqu0c3dertfivguv6.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "140361452290-rnm7ni46apptfag9lu063a16qk66ohf6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.garcesito.restauranteapp",
+            "certificate_hash": "24519ab8fe8987bb87adef8fb1c05344ea7f21c9"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnMzy7xGVEHq3aHesILV25o2JSrXi7VBk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
