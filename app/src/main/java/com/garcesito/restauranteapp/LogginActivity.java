@@ -37,10 +37,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class LogginActivity extends AppCompatActivity {
-    String correoR, contrasenaR,correo,contrasena;
+    String correoR, contrasenaR,correo,contrasena,LogOpcion;
     EditText ecorreo,econtrasena;
     GoogleApiClient mGoogleApiClient;
-    private int RC_SIGN_IN = 5678;
+    private int RC_SIGN_IN = 5678, RC_Face_sign=4321;
     private int opcionLogueo;//0 no hay 1 google 2 facebook 3 correo
     private LoginButton loginButton;
     private CallbackManager callbackManager;
@@ -61,12 +61,14 @@ public class LogginActivity extends AppCompatActivity {
         ecorreo = (EditText) findViewById(R.id.ecorreo);
         econtrasena = (EditText) findViewById(R.id.econtrasena);
         //........loggin facebook........//
-        callbackManager = CallbackManager.Factory.create();
+
         loginButton = (LoginButton) findViewById(R.id.face_sign_in);
+        callbackManager = CallbackManager.Factory.create();
 
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(getApplicationContext(),"Login Exitoso",Toast.LENGTH_SHORT);
                 goMainActivity();
 
             }
@@ -132,8 +134,17 @@ public class LogginActivity extends AppCompatActivity {
 
         //ditor.putInt("opcionLogueo",opcionLogueo);
         //editor.commit();
-
-        Intent intent = new Intent(LogginActivity.this,MainActivity.class);
+        LogOpcion="1";
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("Logueo",LogOpcion);
+        startActivity(intent);
+    }
+    private void goMainActivity2() {
+        LogOpcion="2";
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("Logueo",LogOpcion);
         startActivity(intent);
     }
 
@@ -158,8 +169,12 @@ public class LogginActivity extends AppCompatActivity {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+        if(requestCode == RC_Face_sign)
+        {
+
+            callbackManager.onActivityResult(requestCode,resultCode,data);
+        }
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode,resultCode,data);
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
@@ -167,13 +182,17 @@ public class LogginActivity extends AppCompatActivity {
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            Toast.makeText(getApplicationContext(), "Nombre de usuario:"+acct.toString(), Toast.LENGTH_LONG).show();
+
             Log.d("Nombre de usuario:", acct.getDisplayName());
-            goMainActivity();
+            goMainActivity2();
         } else {
             // Signed out, show unauthenticated UI.
             Toast.makeText(getApplicationContext(), "Error en login", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
     public void Registrese(View view) {
         Intent intent = new Intent(LogginActivity.this, RegistroActivity.class);
@@ -198,10 +217,12 @@ public class LogginActivity extends AppCompatActivity {
         }
         else if((correo.equals(correoR)) && (contrasena.equals(contrasenaR)))
         {
+            LogOpcion="0";
            // Toast.makeText(getApplicationContext(), "entro aqui: ", Toast.LENGTH_SHORT).show();
             Intent intent= new Intent(LogginActivity.this, MainActivity.class);
             intent.putExtra("correo", correoR);
             intent.putExtra("contrasena", contrasenaR);
+            intent.putExtra("Logueo",LogOpcion);
             startActivityForResult(intent,1234);
             //finish();
         }

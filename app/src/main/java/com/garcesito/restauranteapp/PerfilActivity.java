@@ -9,7 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class PerfilActivity extends AppCompatActivity {
-    private String correoR, contrasenaR;
+    private String correoR, contrasenaR,LogOpcion;
     TextView tContrasena,tCorreo;
 
     @Override
@@ -20,6 +20,7 @@ public class PerfilActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         correoR = extras.getString("correo");
         contrasenaR = extras.getString("contrasena");
+        LogOpcion = extras.getString("Logueo");
 
         tCorreo = (TextView) findViewById(R.id.tContrasena);
         tContrasena = (TextView) findViewById(R.id.tCorreo);
@@ -43,6 +44,7 @@ public class PerfilActivity extends AppCompatActivity {
                 intent =  new Intent(PerfilActivity.this, MainActivity.class);
                 intent.putExtra("correo", correoR);
                 intent.putExtra("contrasena", contrasenaR);
+                intent.putExtra("Logueo", LogOpcion);
                 startActivity(intent);
                 finish();
 
