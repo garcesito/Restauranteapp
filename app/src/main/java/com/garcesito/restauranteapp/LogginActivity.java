@@ -13,8 +13,16 @@ import android.text.LoginFilter;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,22 +30,59 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class LogginActivity extends AppCompatActivity {
-    private String correoR, contrasenaR;
+    String correoR, contrasenaR,correo,contrasena;
+    EditText ecorreo,econtrasena;
     GoogleApiClient mGoogleApiClient;
     private int RC_SIGN_IN = 5678;
     private int opcionLogueo;//0 no hay 1 google 2 facebook 3 correo
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
         setContentView(R.layout.activity_loggin);
+
+        ecorreo = (EditText) findViewById(R.id.ecorreo);
+        econtrasena = (EditText) findViewById(R.id.econtrasena);
+        //........loggin facebook........//
+        callbackManager = CallbackManager.Factory.create();
+        loginButton = (LoginButton) findViewById(R.id.face_sign_in);
+
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                goMainActivity();
+
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getApplicationContext(),"Login Cancelado",Toast.LENGTH_SHORT);
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(getApplicationContext(),"Login Error",Toast.LENGTH_SHORT);
+            }
+        });
+        //------------------------------------//
 
         //...........loggin google......//
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -82,11 +127,11 @@ public class LogginActivity extends AppCompatActivity {
     }
     private void goMainActivity()
     {
-        prefs = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
-        editor = prefs.edit();
+        //prefs = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+        //editor = prefs.edit();
 
-        editor.putInt("opcionLogueo",opcionLogueo);
-        editor.commit();
+        //ditor.putInt("opcionLogueo",opcionLogueo);
+        //editor.commit();
 
         Intent intent = new Intent(LogginActivity.this,MainActivity.class);
         startActivity(intent);
@@ -97,31 +142,24 @@ public class LogginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    public void iniciar(View view) {
 
-        //se realizan las validaciones, SI SE CUMPLEN:
-
-        Intent intent = new Intent(LogginActivity.this, MainActivity.class);
-        intent.putExtra("correo", correoR);
-        intent.putExtra("contrasena", contrasenaR);
-        startActivity(intent);
-        finish();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == 1234 && resultCode == RESULT_OK) {
-            correoR = data.getExtras().getString("correo");
-            contrasenaR = data.getExtras().getString("contrasena");
-            Toast.makeText(this, correoR, Toast.LENGTH_SHORT).show();
-            Log.d("correo", correoR); //visualizar en el monitor las variables
-            Log.d("contrasena", contrasenaR);
+            correoR = data.getExtras().getString("Correo");
+            contrasenaR = data.getExtras().getString("Password");
+            //Toast.makeText(getApplicationContext(), correoR, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), contrasenaR, Toast.LENGTH_SHORT).show();
+
         }
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
         super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode,resultCode,data);
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
@@ -130,7 +168,7 @@ public class LogginActivity extends AppCompatActivity {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             Log.d("Nombre de usuario:", acct.getDisplayName());
-            goMainActivity();// implementar esta funcion
+            goMainActivity();
         } else {
             // Signed out, show unauthenticated UI.
             Toast.makeText(getApplicationContext(), "Error en login", Toast.LENGTH_SHORT).show();
@@ -142,4 +180,35 @@ public class LogginActivity extends AppCompatActivity {
         startActivityForResult(intent, 1234);
     }
 
+    public void iniciar(View view) {
+
+        correo=ecorreo.getText().toString();
+        contrasena=econtrasena.getText().toString();
+        //Toast.makeText(getApplicationContext(), "este boton funciona bn", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "correoR: "+correoR, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "contraseña: "+contrasena, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "contraseñaR: "+contrasenaR, Toast.LENGTH_SHORT).show();
+        if(correo.equals("")||contrasena.equals(""))
+        {
+            Toast.makeText(getApplicationContext(), "Ingrese datos", Toast.LENGTH_SHORT).show();
+        }
+        else if( (correoR== null) || (contrasenaR == null))
+        {
+            Toast.makeText(getApplicationContext(), "No hay registros previos", Toast.LENGTH_SHORT).show();
+        }
+        else if((correo.equals(correoR)) && (contrasena.equals(contrasenaR)))
+        {
+           // Toast.makeText(getApplicationContext(), "entro aqui: ", Toast.LENGTH_SHORT).show();
+            Intent intent= new Intent(LogginActivity.this, MainActivity.class);
+            intent.putExtra("correo", correoR);
+            intent.putExtra("contrasena", contrasenaR);
+            startActivityForResult(intent,1234);
+            //finish();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Cuenta o contraseña incorrecta", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 }

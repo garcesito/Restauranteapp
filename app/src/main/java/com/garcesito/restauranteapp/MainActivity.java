@@ -17,8 +17,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String correoR, contrasenaR;
     GoogleApiClient mGoogleApiClient;
-    SharedPreferences prefs;
-    SharedPreferences.Editor editor;
+    //SharedPreferences prefs;
+    //SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         correoR = extras.getString("correo");
         contrasenaR = extras.getString("contrasena");
+
+
     }
 
 
@@ -45,19 +47,27 @@ public class MainActivity extends AppCompatActivity {
         switch(id){
             case R.id.mPerfil:
                 intent =  new Intent(MainActivity.this, PerfilActivity.class);
+                intent.putExtra("correo", correoR);
+                intent.putExtra("contrasena", contrasenaR);
                 startActivity(intent);
                 finish();
+
                 break;
             case R.id.mCerrar:
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                        new ResultCallback<Status>() {
-                            @Override
-                            public void onResult(Status status) {
-                                // ...
-                            }
-                        });
-                intent =  new Intent(MainActivity.this, LogginActivity.class);
-                startActivity(intent);
+
+                //Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                //        new ResultCallback<Status>() {
+                //            @Override
+                //            public void onResult(Status status) {
+                //                // ...
+                //            }
+                //        });
+
+
+                Intent intentcerrar = new Intent();
+                intentcerrar.putExtra("Correo",correoR);
+                intentcerrar.putExtra("Password",contrasenaR);
+                setResult(RESULT_OK,intentcerrar);
                 finish();
                 break;
         }
